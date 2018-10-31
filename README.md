@@ -1,4 +1,4 @@
-# wordlist_creator
+# Wordlist_Creator
 
 Wordlist Creator is a simple tool which purpose is to produce all the combinations
 of words starting from a pattern. For example, running the command as follows:

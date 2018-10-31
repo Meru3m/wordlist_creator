@@ -24,7 +24,6 @@ import argparse
 import itertools
 
 alphabet = string.ascii_lowercase
-
 #to do: add check on dictionary, in order to increase the input combinations (numbers, custom dictionaries, etc)
 #		decide how to manage when a word has non-contiguous placeholders §
 
