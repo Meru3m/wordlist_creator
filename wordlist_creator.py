@@ -1,11 +1,15 @@
-#!/usr/bin/env python
+# %/usr/bin/env python
 
 """
 Wordlist Creator is a simple tool which purpose is to produce all the combinations
-of words starting from a pattern. For example:
+of words starting from a pattern.
 
-giving as first argument -> alder§§n (Each § will be substituted with the second arg)
-and as second argument -> alphabet (in order to serially substitute each § with one letter of the alphabet).
+-d pattern: Valid patterns are 'alphabet', 'numbers'
+
+For example:
+
+giving as first argument -> alder%%n (Each % will be substituted with the second arg)
+and as second argument -> alphabet (in order to serially substitute each % with one letter of the alphabet).
 
 Which will produce the following output:
 alderaan
@@ -24,40 +28,54 @@ import argparse
 import itertools
 
 alphabet = string.ascii_lowercase
-#to do: add check on dictionary, in order to increase the input combinations (numbers, custom dictionaries, etc)
-#		decide how to manage when a word has non-contiguous placeholders §
+numbers = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+
+
+# to do: add check on dictionary, in order to increase the input combinations (custom dictionaries, etc)
+#		decide how to manage when a word has non-contiguous placeholders %
 
 def main(arguments):
     parser = argparse.ArgumentParser(
         description=__doc__,
         formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument('wordPattern', help="Input word", type=argparse.FileType('w'))
-    parser.add_argument('-d', '--dictionary', help="Dictionary set or file",
-                        default="alphabet", type=argparse.FileType('w'))
+    parser.add_argument('wordPattern', help="Input word")
+    parser.add_argument('-d', '--dictionary', help="Dictionary set or file", default="alphabet")
 
     args = parser.parse_args()
     combinations = produceList(args)
     if booleanQuery("Do you want to print all the combinations?"):
-    	print(combinations)
+        print(combinations)
+
 
 def produceList(arguments):
-	outcome = []
-	if(arguments.dictionary.name == "alphabet"):
-		for letters in itertools.product(alphabet, repeat=placeHolderCounter(arguments.wordPattern.name)):
-			outcome.append(substituter(arguments.wordPattern.name, letters))
-			#here some code to save or print the result
-	return outcome
+    outcome = []
+    if (arguments.dictionary == "alphabet"):
+        for letters in itertools.product(alphabet, repeat=placeHolderCounter(arguments.wordPattern)):
+            outcome.append(substituter(arguments.wordPattern, letters))
+    # here some code to save or print the result
+    else:
+        try:
+            file = open(arguments.dictionary) #os.path.realpath(__file__)
+            for letters in itertools.product(file.read(), repeat=placeHolderCounter(arguments.wordPattern)):
+                outcome.append(substituter(arguments.wordPattern, letters))
+        except:
+            print("Input is not a file, exit execution.")
+            exit(1)
+    return outcome
+
 
 def substituter(*args):
-	occorrence = 1
-	result = str(args[0])
-	for letter in args[1]:
-		result=result.replace('§', letter, occorrence)
-		occorrence += 1
-	return result
+    occorrence = 1
+    result = str(args[0])
+    for letter in args[1]:
+        result = result.replace('%', letter, occorrence)
+        occorrence += 1
+    return result
+
 
 def placeHolderCounter(word):
-	return word.count('§')
+    return word.count('%')
+
 
 def booleanQuery(question, default="no"):
     """Ask a yes/no question via input() and return their answer.
@@ -69,6 +87,7 @@ def booleanQuery(question, default="no"):
 
     The "answer" return value is True for "yes" or False for "no".
     """
+
     valid = {"yes": True, "y": True, "ye": True,
              "no": False, "n": False}
     if default is None:
@@ -90,6 +109,7 @@ def booleanQuery(question, default="no"):
         else:
             sys.stdout.write("Please respond with 'yes' or 'no' "
                              "(or 'y' or 'n').\n")
+
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1:]))
