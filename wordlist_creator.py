@@ -53,6 +53,9 @@ def produceList(arguments):
         for letters in itertools.product(alphabet, repeat=placeHolderCounter(arguments.wordPattern)):
             outcome.append(substituter(arguments.wordPattern, letters))
     # here some code to save or print the result
+    elif (arguments.dictionary == "numbers"):
+        for number in itertools.product(numbers, repeat=placeHolderCounter(arguments.wordPattern)):
+            outcome.append(substituter(arguments.wordPattern, number))
     else:
         try:
             file = open(arguments.dictionary) #os.path.realpath(__file__)
